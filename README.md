@@ -11,19 +11,19 @@ Original author dum warehouse address: https://github.com/eijiotieno-official/du
 
 <div style="display: flex;">
   <div style="border: 1px solid #ccc; padding: 1px; display: inline-block; margin-right: 10px;">
-    <p style="text-align: center; margin-top: 10px; margin-bottom: 10px;">Theme 1</p>
+    <p style="text-align: center; margin-top: 10px; margin-bottom: 10px;"></p>
     <img src="screenshots/Screenshot_20241205-155351.png" alt="Home Screen 1" width="300">
   </div>
 
   <div style="border: 1px solid #ccc; padding: 1px; display: inline-block;">
-    <p style="text-align: center; margin-top: 10px; margin-bottom: 10px;">Theme 2</p>
+    <p style="text-align: center; margin-top: 10px; margin-bottom: 10px;"></p>
     <img src="screenshots/Screenshot_20241205-155534.png" alt="Home Screen 2" width="300">
   </div>
 
 
 
 <div style="border: 1px solid #ccc; padding: 1px; display: inline-block;">
-<p style="text-align: center; margin-top: 10px; margin-bottom: 10px;">Search Screen</p>
+<p style="text-align: center; margin-top: 10px; margin-bottom: 10px;"></p>
   <img src="screenshots/Screenshot_20241205-155544.png" alt="Search Screen" width="300">
 </div>
 
