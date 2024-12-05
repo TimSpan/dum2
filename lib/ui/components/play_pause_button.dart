@@ -31,6 +31,7 @@ class PlayPauseButton extends StatelessWidget {
 
           // 返回一个 IconButton，按下时切换播放/暂停
           return IconButton(
+            color: Colors.white,
             onPressed: () {
               // 根据当前播放状态切换播放/暂停
               if (playing) {

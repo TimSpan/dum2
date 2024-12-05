@@ -1,9 +1,10 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dum/services/song_handler.dart';
 import 'package:dum/ui/components/play_pause_button.dart';
 import 'package:dum/ui/components/song_progress.dart';
 import 'package:flutter/material.dart';
-import 'package:on_audio_query/on_audio_query.dart';
+// import 'package:on_audio_query/on_audio_query.dart';
 
 class PlayerDeck extends StatelessWidget {
   final SongHandler songHandler;
@@ -55,19 +56,34 @@ class PlayerDeck extends StatelessWidget {
   }
 
   // 构建专辑封面 widget
+  // 构建专辑封面 widget
   Widget _buildArtwork(MediaItem playingSong) {
     return Positioned.fill(
-      child: QueryArtworkWidget(
-        // 设置专辑封面的属性
-        id: int.parse(playingSong.displayDescription!),
-        type: ArtworkType.AUDIO,
-        size: 1,
-        quality: 100,
-        artworkHeight: 45,
-        artworkWidth: 45,
-        artworkBorder: BorderRadius.circular(16.0),
-        nullArtworkWidget:
-            const Icon(Icons.music_note_rounded), // 如果没有封面，显示音符图标
+      child: Stack(
+        children: [
+          // 专辑封面图片
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8.0), // 圆角裁剪
+            child: CachedNetworkImage(
+              imageUrl: playingSong.artUri.toString(),
+              placeholder: (context, url) => const Icon(Icons.image),
+              errorWidget: (context, url, error) =>
+                  const Icon(Icons.error_outline),
+              fit: BoxFit.cover,
+              // 确保图片铺满容器
+              width: double.infinity,
+              // 确保宽度填满父容器
+              height: double.infinity, // 确保高度填满父容器
+            ),
+          ),
+          // 半透明遮罩层
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8.0), // 和图片保持一致
+              color: Colors.black.withOpacity(0.3), // 半透明黑色遮罩层
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -77,7 +93,7 @@ class PlayerDeck extends StatelessWidget {
     return Positioned.fill(
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16.0),
+          borderRadius: BorderRadius.circular(8.0),
           color: Colors.black.withOpacity(0.5), // 半透明黑色背景
         ),
       ),
@@ -106,6 +122,8 @@ class PlayerDeck extends StatelessWidget {
         onTap(index); // 点击时执行传入的回调
       },
       tileColor: isLast ? Colors.transparent : null,
+      // tileColor: Colors.white,
+
       // 如果是最后一项，背景透明
       leading: isLast
           ? null
@@ -113,36 +131,45 @@ class PlayerDeck extends StatelessWidget {
               // 标题部分的前置 widget，显示专辑封面
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8.0),
+                // color: Colors.white
                 color: isLast
                     ? Colors.transparent
                     : Theme.of(context)
                         .colorScheme
                         .primaryContainer
-                        .withOpacity(0.5), // 背景颜色带有透明度
+                        .withOpacity(0.5),
               ),
-              child: QueryArtworkWidget(
-                // 前置封面显示
-                id: int.parse(playingSong.displayDescription!),
-                type: ArtworkType.AUDIO,
-                size: 500,
-                quality: 100,
-                artworkBorder: BorderRadius.circular(8.0),
-                errorBuilder: (p0, p1, p2) =>
-                    const Icon(Icons.music_note_rounded), // 错误时显示音符图标
-              ),
-            ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: CachedNetworkImage(
+                  height: 45,
+                  width: 45,
+                  // 将 Uri 转换为 String
+                  imageUrl: playingSong.artUri.toString(),
+                  placeholder: (context, url) => const Icon(Icons.image),
+                  // 可以使用占位符
+                  errorWidget: (context, url, error) =>
+                      const Icon(Icons.error_outline),
+
+                  // 图片淡入效果
+                  fit: BoxFit.cover, // 图片填充方式
+                ),
+              )),
       title: Text(
         isLast ? "" : playingSong.title,
         maxLines: 1,
         overflow: TextOverflow.ellipsis, // 防止文本溢出
+        style: const TextStyle(
+          color: Colors.white, // 显式设置标题文字为白色
+          // fontSize: 16.0, // 可以根据需要调整字体大小
+        ),
       ),
       subtitle: playingSong.artist == null
           ? null
-          : Text(
-              isLast ? "" : playingSong.artist!,
+          : Text(isLast ? "" : playingSong.artist!,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-            ),
+              style: const TextStyle(color: Colors.white)),
       trailing: isLast
           ? null
           : SizedBox(

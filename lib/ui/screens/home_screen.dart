@@ -51,26 +51,27 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (context, songsProvider, _) {
           // 使用 Scaffold 组件构建页面结构
           return Scaffold(
-            appBar: AppBar(
-              title: const Text("Dum"),
-              actions: [
-                // 搜索按钮，点击后导航到 SearchScreen
-                IconButton(
-                  onPressed: () => Get.to(
-                    () => SearchScreen(songHandler: widget.songHandler),
-                    duration: const Duration(milliseconds: 700),
-                    transition: Transition.rightToLeft,
+              appBar: AppBar(
+                title: const Text("网易云音乐"),
+                actions: [
+                  // 搜索按钮，点击后导航到 SearchScreen
+                  IconButton(
+                    onPressed: () => Get.to(
+                      () => SearchScreen(songHandler: widget.songHandler),
+                      duration: const Duration(milliseconds: 700),
+                      transition: Transition.rightToLeft,
+                    ),
+                    icon: const Icon(
+                      Icons.search_rounded,
+                    ),
                   ),
-                  icon: const Icon(
-                    Icons.search_rounded,
-                  ),
-                ),
-              ],
-            ),
-            body: songsProvider.isLoading
-                ? _buildLoadingIndicator() // 显示加载指示器
-                : _buildSongsList(songsProvider), // 显示歌曲列表
-          );
+                ],
+              ),
+              body: songsProvider.isLoading
+                  ? _buildLoadingIndicator() // 显示加载指示器  这是 那个 loading 转圈状态
+                  : _buildSongsList(songsProvider) // 显示歌曲列表
+              // body: _buildSongsList(songsProvider)
+              );
         },
       ),
     );
@@ -105,7 +106,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        // PlayerDeck 控件，提供音频播放控制功能
+
+        // 显示底部播放控制栏
         PlayerDeck(
           songHandler: widget.songHandler,
           isLast: false,

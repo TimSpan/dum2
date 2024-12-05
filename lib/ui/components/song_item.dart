@@ -1,9 +1,6 @@
-import 'dart:io';
-
-import 'package:dum/services/uri_to_file.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dum/utils/formatted_text.dart';
 import 'package:flutter/material.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class SongItem extends StatelessWidget {
   final String? searchedWord; // 用户搜索的关键字（如果有的话）
@@ -81,17 +78,9 @@ class SongItem extends StatelessWidget {
               );
   }
 
-  // 构建前置部件（封面图），异步加载文件
   Widget _buildLeading() {
-    return FutureBuilder<File?>(
-      // 使用uriToFile函数将Uri转换为File
-      future: uriToFile(art),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          // 如果加载图片发生错误，显示一个错误图标
-          return const Icon(Icons.error_outline);
-        }
-
+    return Builder(
+      builder: (context) {
         return Container(
           height: 45,
           width: 45,
@@ -100,22 +89,23 @@ class SongItem extends StatelessWidget {
             color:
                 Theme.of(context).colorScheme.primaryContainer.withOpacity(0.5),
           ),
-          child: snapshot.data == null
-              ? const Icon(Icons.music_note_rounded) // 如果没有封面图，显示一个音乐符号图标
-              : ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: FadeInImage(
-                    height: 45,
-                    width: 45,
-                    // 使用 FileImage 显示歌曲封面
-                    image: FileImage(snapshot.data!),
-                    placeholder: MemoryImage(kTransparentImage),
-                    // 使用透明图片作为占位符
-                    fadeInDuration: const Duration(milliseconds: 700),
-                    // 图片渐入动画时长
-                    fit: BoxFit.cover, // 保持图片比例，填充容器
-                  ),
-                ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: CachedNetworkImage(
+              height: 45,
+              width: 45,
+              // 将 Uri 转换为 String
+              imageUrl: art?.toString() ?? '',
+              placeholder: (context, url) => const Icon(Icons.image),
+              // 可以使用占位符
+              errorWidget: (context, url, error) =>
+                  const Icon(Icons.error_outline),
+              // 错误时显示图标
+              // fadeInDuration: const Duration(milliseconds: 700),
+              // 图片淡入效果
+              fit: BoxFit.cover, // 图片填充方式
+            ),
+          ),
         );
       },
     );

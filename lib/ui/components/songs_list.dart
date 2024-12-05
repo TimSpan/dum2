@@ -26,37 +26,37 @@ class SongsList extends StatelessWidget {
     // 如果没有歌曲，显示消息提示
     return songs.isEmpty
         ? const Center(
-      child: Text("You Have No Taste!!!"), // 没有歌曲时显示的文本
-    )
+            child: Text("You Have No Taste!!!"), // 没有歌曲时显示的文本
+          )
         : ListView.builder(
-      // 构建一个可滚动的歌曲列表
-      controller: autoScrollController,
-      physics: const BouncingScrollPhysics(), // 设置弹性滚动效果
-      itemCount: songs.length, // 列表项的数量
-      itemBuilder: (context, index) {
-        MediaItem song = songs[index]; // 获取当前索引的歌曲
+            // 构建一个可滚动的歌曲列表
+            controller: autoScrollController,
+            physics: const BouncingScrollPhysics(), // 设置弹性滚动效果
+            itemCount: songs.length, // 列表项的数量
+            itemBuilder: (context, index) {
+              MediaItem song = songs[index]; // 获取当前索引的歌曲
 
-        // 根据播放状态构建 SongItem
-        return StreamBuilder<MediaItem?>(
-          stream: songHandler.mediaItem.stream, // 监听当前播放的歌曲
-          builder: (context, snapshot) {
-            MediaItem? playingSong = snapshot.data; // 获取当前正在播放的歌曲
+              // 根据播放状态构建 SongItem
+              return StreamBuilder<MediaItem?>(
+                stream: songHandler.mediaItem.stream, // 监听当前播放的歌曲
+                builder: (context, snapshot) {
+                  MediaItem? playingSong = snapshot.data; // 获取当前正在播放的歌曲
 
-            // 如果当前是最后一首歌，使用不同的显示方式
-            return index == (songs.length - 1)
-                ? _buildLastSongItem(song, playingSong) // 最后一首歌的特殊展示
-                : AutoScrollTag(
-              // 使用 AutoScrollTag 来实现自动滚动功能
-              key: ValueKey(index),
-              controller: autoScrollController,
-              index: index,
-              child:
-              _buildRegularSongItem(song, playingSong), // 常规歌曲项
-            );
-          },
-        );
-      },
-    );
+                  // 如果当前是最后一首歌，使用不同的显示方式
+                  return index == (songs.length - 1)
+                      ? _buildLastSongItem(song, playingSong) // 最后一首歌的特殊展示
+                      : AutoScrollTag(
+                          // 使用 AutoScrollTag 来实现自动滚动功能
+                          key: ValueKey(index),
+                          controller: autoScrollController,
+                          index: index,
+                          child:
+                              _buildRegularSongItem(song, playingSong), // 常规歌曲项
+                        );
+                },
+              );
+            },
+          );
   }
 
   // 构建最后一首歌的项，包含一个控制面板（PlayerDeck）
@@ -65,7 +65,9 @@ class SongsList extends StatelessWidget {
       children: [
         // 显示最后一首歌的 SongItem
         SongItem(
-          id: int.parse(song.displayDescription!),
+          // id: int.parse(song.displayDescription!),
+          id: int.parse(song.displayDescription ?? '0'),
+          // 提供默认值
           isPlaying: song == playingSong,
           // 如果这首歌正在播放，设置为 true
           title: formattedTitle(song.title),
@@ -73,6 +75,7 @@ class SongsList extends StatelessWidget {
           artist: song.artist,
           // 歌手名称
           onSongTap: () async {
+            print('11111111111');
             await songHandler.skipToQueueItem(songs.length - 1); // 跳到队列中的最后一首歌
           },
           art: song.artUri, // 获取歌曲封面
@@ -87,38 +90,9 @@ class SongsList extends StatelessWidget {
     );
   }
 
-  // 构建常规歌曲项
-  // Widget _buildRegularSongItem(MediaItem song, MediaItem? playingSong) {
-  //   return SongItem(
-  //     id: int.parse(song.displayDescription!),
-  //     isPlaying: song == playingSong,
-  //     // 判断歌曲是否正在播放
-  //     title: formattedTitle(song.title),
-  //     // 格式化歌曲标题
-  //     artist: song.artist,
-  //     // 歌手名称
-  //     onSongTap: () async {
-  //       await songHandler.skipToQueueItem(songs.indexOf(song)); // 跳到队列中的当前歌曲
-  //     },
-  //     art: song.artUri, // 获取歌曲封面
-  //   );
-  // }
   Widget _buildRegularSongItem(MediaItem song, MediaItem? playingSong) {
-    print("song_______________$song");
+    // print("song_______________$song");
 
-    // return SongItem(
-    //   id: 31231,
-    //   // 提供默认值，避免 null
-    //   isPlaying: false,
-    //   title: "kevin",
-    //   // 如果 title 为 null，使用默认标题
-    //   artist: '未知歌手',
-    //   // 如果 artist 为 null，使用默认歌手名称
-    //   onSongTap: () async {
-    //     await songHandler.skipToQueueItem(songs.indexOf(song)); // 跳到队列中的当前歌曲
-    //   },
-    //   art: song.artUri,
-    // );
     return SongItem(
       id: int.parse(song.displayDescription ?? '0'),
       // 提供默认值，避免 null
@@ -128,7 +102,10 @@ class SongsList extends StatelessWidget {
       artist: song.artist ?? '未知歌手',
       // 如果 artist 为 null，使用默认歌手名称
       onSongTap: () async {
-        await songHandler.skipToQueueItem(songs.indexOf(song)); // 跳到队列中的当前歌曲
+        int index = songs.indexOf(song);
+        print('执行播放_______________________________传递参数（$index');
+
+        await songHandler.skipToQueueItem(index); // 跳到队列中的当前歌曲
       },
       art: song.artUri,
     );

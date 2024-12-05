@@ -8,6 +8,7 @@ class SongHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   // 根据 MediaItem 创建音频源的函数
   UriAudioSource _createAudioSource(MediaItem item) {
+    // print('创建音频源item: ${item}');
     return ProgressiveAudioSource(Uri.parse(item.id));
   }
 
@@ -57,8 +58,12 @@ class SongHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     final audioSource = songs.map(_createAudioSource).toList();
 
     // 设置音频播放器的音频源为多个音频源的串联
-    await audioPlayer
-        .setAudioSource(ConcatenatingAudioSource(children: audioSource));
+    try {
+      await audioPlayer
+          .setAudioSource(ConcatenatingAudioSource(children: audioSource));
+    } catch (e) {
+      print("加载音频源失败_______________________________: $e");
+    }
 
     // 将歌曲添加到队列中
     queue.value.clear();
@@ -93,6 +98,8 @@ class SongHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   // 跳到队列中的特定项并开始播放
   @override
   Future<void> skipToQueueItem(int index) async {
+    print('Duration.zero_____________${Duration.zero}');
+    print('Duration.zero_____________${Duration.zero.inMilliseconds}');
     await audioPlayer.seek(Duration.zero, index: index);
     play();
   }
