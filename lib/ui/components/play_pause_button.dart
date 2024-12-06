@@ -20,6 +20,7 @@ class PlayPauseButton extends StatelessWidget {
   // 构建方法，用于创建 widget
   @override
   Widget build(BuildContext context) {
+    // return Text('111');
     // StreamBuilder 监听播放状态的变化
     return StreamBuilder<PlaybackState>(
       stream: songHandler.playbackState.stream,
@@ -30,6 +31,7 @@ class PlayPauseButton extends StatelessWidget {
           bool playing = snapshot.data!.playing;
 
           // 返回一个 IconButton，按下时切换播放/暂停
+          // return Text('111');
           return IconButton(
             color: Colors.white,
             onPressed: () {

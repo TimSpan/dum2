@@ -21,8 +21,11 @@ class SongsProvider extends ChangeNotifier {
 
   // 定义 API 接口 URL
   // final String _apiUrl = "https://api.csm.sayqz.com/playlist/track/all?id=6716276773&offset=0&limit=5";
+  // 8902391477 我的歌单
+  // 9893575498 朋克歌单
+  // FlutterAppFree 精选免费歌单 12959000338
   final String _apiUrl =
-      "https://api.csm.sayqz.com/playlist/track/all?id=9893575498&offset=0&limit=50";
+      "https://api.csm.sayqz.com/playlist/track/all?id=12959000338&limit=100&offset=0";
 
   Future<void> loadSongs(SongHandler songHandler) async {
     try {
@@ -43,7 +46,7 @@ class SongsProvider extends ChangeNotifier {
             var id = item['id'];
             return MediaItem(
               id: 'https://music.163.com/song/media/outer/url?id=$id.mp3',
-              title: item['al']?['name'] ?? "未知标题",
+              title: item['name'].toString() ?? "未知标题",
               album: item['al']?['name'] ?? "未知专辑",
               artist: item['ar'] != null && item['ar'].isNotEmpty
                   ? item['ar'][0]['name'] // 从 ar 数组中取第一个艺术家名称

@@ -26,37 +26,45 @@ class SongsList extends StatelessWidget {
     // 如果没有歌曲，显示消息提示
     return songs.isEmpty
         ? const Center(
-            child: Text("You Have No Taste!!!"), // 没有歌曲时显示的文本
+            child: Text("没有歌单数据"), // 没有歌曲时显示的文本
           )
-        : ListView.builder(
-            // 构建一个可滚动的歌曲列表
-            controller: autoScrollController,
-            physics: const BouncingScrollPhysics(), // 设置弹性滚动效果
-            itemCount: songs.length, // 列表项的数量
-            itemBuilder: (context, index) {
-              MediaItem song = songs[index]; // 获取当前索引的歌曲
+        : GlowingOverscrollIndicator(
+            axisDirection: AxisDirection.down,
+            color: Theme.of(context).hoverColor,
+            child: ListView.builder(
+              padding: const EdgeInsets.only(top: 16.0),
+              // 构建一个可滚动的歌曲列表
+              controller: autoScrollController,
+              // physics: const BouncingScrollPhysics(), // 设置弹性滚动效果
+              physics: const ClampingScrollPhysics(),
+              // Android 风格，滚动到边界时会有拉到尽头的波纹效果。
 
-              // 根据播放状态构建 SongItem
-              return StreamBuilder<MediaItem?>(
-                stream: songHandler.mediaItem.stream, // 监听当前播放的歌曲
-                builder: (context, snapshot) {
-                  MediaItem? playingSong = snapshot.data; // 获取当前正在播放的歌曲
+              itemCount: songs.length,
+              // 列表项的数量
+              itemBuilder: (context, index) {
+                MediaItem song = songs[index]; // 获取当前索引的歌曲
 
-                  // 如果当前是最后一首歌，使用不同的显示方式
-                  return index == (songs.length - 1)
-                      ? _buildLastSongItem(song, playingSong) // 最后一首歌的特殊展示
-                      : AutoScrollTag(
-                          // 使用 AutoScrollTag 来实现自动滚动功能
-                          key: ValueKey(index),
-                          controller: autoScrollController,
-                          index: index,
-                          child:
-                              _buildRegularSongItem(song, playingSong), // 常规歌曲项
-                        );
-                },
-              );
-            },
-          );
+                // 根据播放状态构建 SongItem
+                return StreamBuilder<MediaItem?>(
+                  stream: songHandler.mediaItem.stream, // 监听当前播放的歌曲
+                  builder: (context, snapshot) {
+                    MediaItem? playingSong = snapshot.data; // 获取当前正在播放的歌曲
+
+                    // 如果当前是最后一首歌，使用不同的显示方式
+                    return index == (songs.length - 1)
+                        ? _buildLastSongItem(song, playingSong) // 最后一首歌的特殊展示
+                        : AutoScrollTag(
+                            // 使用 AutoScrollTag 来实现自动滚动功能
+                            key: ValueKey(index),
+                            controller: autoScrollController,
+                            index: index,
+                            child: _buildRegularSongItem(
+                                song, playingSong), // 常规歌曲项
+                          );
+                  },
+                );
+              },
+            ));
   }
 
   // 构建最后一首歌的项，包含一个控制面板（PlayerDeck）

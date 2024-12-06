@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 
 class SearchScreen extends StatefulWidget {
   final SongHandler songHandler;
+
   const SearchScreen({super.key, required this.songHandler});
 
   @override
@@ -18,6 +19,7 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   // The result list to store filtered songs
   final List<MediaItem> _result = [];
+
   // Controller for the search input field
   final TextEditingController _textEditingController = TextEditingController();
 
@@ -118,30 +120,38 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget _buildSongList(List<MediaItem> songs) {
     return Stack(
       children: [
-        // Display the list of songs
-        ListView.builder(
-          physics: const BouncingScrollPhysics(),
-          itemCount: _result.isNotEmpty ? _result.length : songs.length,
-          itemBuilder: (context, index) {
-            // Determine the current song based on whether there is a search result
-            MediaItem song = _result.isNotEmpty ? _result[index] : songs[index];
-            int songIndex = songs.indexOf(song);
+        GlowingOverscrollIndicator(
+          axisDirection: AxisDirection.down,
+          color: Theme.of(context).hoverColor,
+          child: ListView.builder(
+            padding: const EdgeInsets.only(top: 16.0),
+            physics: const ClampingScrollPhysics(),
+            itemCount: _result.isNotEmpty ? _result.length : songs.length,
+            itemBuilder: (context, index) {
+              // Determine the current song based on whether there is a search result
+              MediaItem song =
+                  _result.isNotEmpty ? _result[index] : songs[index];
+              int songIndex = songs.indexOf(song);
 
-            // Build the appropriate song item based on its position in the list
-            return StreamBuilder<MediaItem?>(
-              stream: widget.songHandler.mediaItem.stream,
-              builder: (context, snapshot) {
-                MediaItem? playingSong = snapshot.data;
-                return index ==
-                        (_result.isNotEmpty
-                            ? _result.length - 1
-                            : songs.length - 1)
-                    ? _buildLastSongItem(song, playingSong, songs.indexOf(song))
-                    : _buildRegularSongItem(song, playingSong, songIndex);
-              },
-            );
-          },
+              // Build the appropriate song item based on its position in the list
+              return StreamBuilder<MediaItem?>(
+                stream: widget.songHandler.mediaItem.stream,
+                builder: (context, snapshot) {
+                  MediaItem? playingSong = snapshot.data;
+                  return index ==
+                          (_result.isNotEmpty
+                              ? _result.length - 1
+                              : songs.length - 1)
+                      ? _buildLastSongItem(
+                          song, playingSong, songs.indexOf(song))
+                      : _buildRegularSongItem(song, playingSong, songIndex);
+                },
+              );
+            },
+          ),
         ),
+        // Display the list of songs
+
         // Display the player deck at the bottom
         Column(
           mainAxisAlignment: MainAxisAlignment.end,

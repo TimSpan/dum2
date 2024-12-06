@@ -59,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onPressed: () => Get.to(
                       () => SearchScreen(songHandler: widget.songHandler),
                       duration: const Duration(milliseconds: 700),
-                      transition: Transition.rightToLeft,
+                      transition: Transition.native,
                     ),
                     icon: const Icon(
                       Icons.search_rounded,
@@ -90,6 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildSongsList(SongsProvider songsProvider) {
     return Stack(
       children: [
+
         // 歌曲列表组件，传递歌曲数据和滚动控制器
         SongsList(
           songHandler: widget.songHandler,
